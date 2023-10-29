@@ -18,6 +18,7 @@ public class CommandHandler
         _client = client;
         _services = services;
         _handler = handler;
+        client.ChannelCreated += ChannelCreated;
     }
 
     public async Task InitializeAsync()
@@ -76,5 +77,32 @@ public class CommandHandler
     private async Task ReadyAsync()
     {
         await _handler.RegisterCommandsGloballyAsync();
+    }
+
+
+    private async Task ChannelCreated(SocketChannel channel)
+    {
+        if (channel is SocketTextChannel textChannel)
+        {
+            ulong categoryIdToDetect = 1163983820245180446; // Replace with the desired category ID
+
+            if (textChannel.CategoryId == categoryIdToDetect)
+            {
+
+                DiscordButtonComponent button1 = new DiscordButtonComponent(ButtonStyle.Primary, "1", "Button 1");
+                DiscordButtonComponent button2 = new DiscordButtonComponent(ButtonStyle.Primary, "2", "Button 2");
+
+                //Make the MessageBuilder and add on the buttons
+                //A Message can have up to 5 x 5 worth of buttons. Thats 5 rows, each with 5 buttons
+                var message = new DiscordMessageBuilder()
+                    .AddEmbed (new DiscordEmbedBuilder())
+                        .WithColor(Color.DarkBlue)
+                        .WithTitle("This is a message with buttons")
+                        .WithDescription("Please select a button")
+                    .AddComponents(button1, button2);
+
+                await textChannel.SendMessageAsync();
+            }
+        }
     }
 }
